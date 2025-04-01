@@ -21,7 +21,7 @@ screen -S saved-airdrop
 ```
 git clone bot :
 ```
-https://github.com/shareithub/saved-airdrop.git
+git clone https://github.com/shareithub/saved-airdrop.git
 ```
 go to folder bot :
 ```
