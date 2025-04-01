@@ -17,6 +17,7 @@ from telegram.ext import (
 from oauth2client.service_account import ServiceAccountCredentials
 
 load_dotenv()
+ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -39,6 +40,20 @@ CHOOSE_AIRDROP_DELETE = 30
 REMINDER_SETT_MODE, REMINDER_SETT_DELAY, REMINDER_SETT_CHOOSE = range(50, 53)
 STOP_REMINDER_CHOOSE = 60
 
+def restricted(func):
+    @wraps(func)
+    async def wrapped(update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs):
+        user_id = update.effective_user.id
+        if user_id != ADMIN_ID:
+            # Kirim pesan bahwa pengguna tidak diizinkan
+            if update.message:
+                await update.message.reply_text("Maaf, Anda tidak memiliki izin untuk menggunakan bot ini.")
+            elif update.callback_query:
+                await update.callback_query.answer("Maaf, Anda tidak memiliki izin.", show_alert=True)
+            return  # Tidak melanjutkan pemanggilan handler
+        return await func(update, context, *args, **kwargs)
+    return wrapped
+    
 def load_wallets():
     if os.path.exists(WALLET_FILE):
         with open(WALLET_FILE, "r") as f:
