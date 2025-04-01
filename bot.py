@@ -2,6 +2,7 @@ import logging
 import os
 import json
 import gspread
+from functools import wraps
 from dotenv import load_dotenv
 from datetime import datetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
