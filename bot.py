@@ -49,7 +49,7 @@ def restricted(func):
         if user_id != ADMIN_ID:
             # Kirim pesan bahwa pengguna tidak diizinkan
             if update.message:
-                await update.message.reply_text("Maaf, Anda tidak memiliki izin untuk menggunakan bot ini.")
+                await update.message.reply_text("Maaf, Anda tidak memiliki izin untuk menggunakan bot ini. Jangan lupa Subscribe Channel Youtube & Telegram : SHARE IT HUB")
             elif update.callback_query:
                 await update.callback_query.answer("Maaf, Anda tidak memiliki izin.", show_alert=True)
             return  # Tidak melanjutkan pemanggilan handler
