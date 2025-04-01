@@ -97,16 +97,19 @@ def get_main_keyboard():
         [InlineKeyboardButton("🗑 Delete Airdrop", callback_data="delete_airdrop")],
     ]
     return InlineKeyboardMarkup(keyboard)
-
+    
+@restricted
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("This bot was created by: SHARE IT HUB🚀", reply_markup=get_main_keyboard())
 
+@restricted
 async def add_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     await query.message.reply_text("💳 Silakan masukkan WALLET ADDRESS Anda:")
     return INPUT_WALLET_ADDRESS
 
+@restricted
 async def receive_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["wallet_address"] = update.message.text.strip()
     keyboard = [
@@ -116,6 +119,7 @@ async def receive_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Pilih tipe wallet:", reply_markup=InlineKeyboardMarkup(keyboard))
     return CHOOSE_WALLET_TYPE
 
+@restricted
 async def choose_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -127,24 +131,28 @@ async def choose_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text("Silakan masukkan nama CHAIN untuk wallet Anda:")
     return INPUT_CHAIN
 
+@restricted
 async def save_other_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = update.message.text.strip()
     save_wallet(str(update.message.from_user.id), context.user_data["wallet_address"], chain)
     await update.message.reply_text(f"✅ WALLET {context.user_data['wallet_address'].upper()} ({chain.upper()}) BERHASIL DISIMPAN!", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+@restricted
 async def add_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     await query.message.reply_text("📎 Silakan kirimkan LINK TELEGRAM untuk AIRDROP ini:")
     return INPUT_AIRDROP_LINK
 
+@restricted
 async def receive_airdrop_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
     context.user_data["airdrop_link"] = text.upper()
     await update.message.reply_text("📝 Silakan masukkan JUDUL AIRDROP:")
     return INPUT_AIRDROP_TITLE
 
+@restricted
 async def receive_airdrop_title(update: Update, context: ContextTypes.DEFAULT_TYPE):
     title = update.message.text.strip()
     context.user_data["airdrop_title"] = title.upper()
@@ -157,6 +165,7 @@ async def receive_airdrop_title(update: Update, context: ContextTypes.DEFAULT_TY
     await update.message.reply_text("Pilih JENIS AIRDROP:", reply_markup=InlineKeyboardMarkup(keyboard))
     return CHOOSE_AIRDROP_TYPE
 
+@restricted
 async def choose_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -173,6 +182,7 @@ async def choose_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text("PILIH WALLET ADDRESS UNTUK AIRDROP INI:", reply_markup=InlineKeyboardMarkup(keyboard))
     return CHOOSE_WALLET
 
+@restricted
 async def save_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -191,6 +201,7 @@ async def save_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text("✅ AIRDROP BERHASIL DISIMPAN KE GOOGLE SHEET!", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+@restricted
 async def delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -206,6 +217,7 @@ async def delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text("Pilih wallet yang ingin DIHAPUS:", reply_markup=InlineKeyboardMarkup(keyboard))
     return CHOOSE_WALLET_DELETE
 
+@restricted
 async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -223,6 +235,7 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
         await query.message.reply_text("⚠️ Gagal menghapus wallet.", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+@restricted
 async def list_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -238,6 +251,7 @@ async def list_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(text, parse_mode="Markdown", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+@restricted
 async def list_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -264,6 +278,7 @@ async def list_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text("⚠️ Terjadi kesalahan saat mengambil data.", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+@restricted
 async def delete_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -285,6 +300,7 @@ async def delete_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text("⚠️ Terjadi kesalahan saat mengambil data.", reply_markup=get_main_keyboard())
         return ConversationHandler.END
 
+@restricted
 async def process_delete_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -311,6 +327,7 @@ async def process_delete_airdrop(update: Update, context: ContextTypes.DEFAULT_T
         await query.message.reply_text("⚠️ Gagal menghapus airdrop.", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+@restricted
 async def reminder_airdrop_job(context: ContextTypes.DEFAULT_TYPE):
     job_data = context.job.data
     chat_id = job_data["chat_id"]
@@ -334,6 +351,7 @@ async def reminder_airdrop_job(context: ContextTypes.DEFAULT_TYPE):
         text = "⚠️ Terjadi kesalahan saat mengambil data airdrop."
     await context.bot.send_message(chat_id=chat_id, text=text, parse_mode="Markdown")
 
+@restricted
 async def reminder_sett(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -344,6 +362,7 @@ async def reminder_sett(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text("Pilih mode reminder:", reply_markup=InlineKeyboardMarkup(keyboard))
     return REMINDER_SETT_MODE
 
+@restricted
 async def choose_reminder_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -356,12 +375,14 @@ async def choose_reminder_mode(update: Update, context: ContextTypes.DEFAULT_TYP
         await query.message.reply_text("Mode manual terpilih. Silakan masukkan delay dalam menit:")
         return REMINDER_SETT_DELAY
 
+@restricted
 async def reminder_sett_input_delay(update: Update, context: ContextTypes.DEFAULT_TYPE):
     delay = update.message.text.strip()
     context.user_data["reminder_delay"] = delay
     await update.message.reply_text("Delay telah diterima. Sekarang, pilih data airdrop yang ingin di-reminder:")
     return await reminder_sett_choose(update, context)
 
+@restricted
 async def reminder_sett_choose(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query if update.callback_query else None
     chat_id = query.from_user.id if query else update.message.chat_id
@@ -406,6 +427,7 @@ async def reminder_sett_choose(update: Update, context: ContextTypes.DEFAULT_TYP
             await update.message.reply_text("⚠️ Terjadi kesalahan saat mengambil data.", reply_markup=get_main_keyboard())
         return ConversationHandler.END
 
+@restricted
 async def reminder_sett_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -423,6 +445,7 @@ async def reminder_sett_schedule(update: Update, context: ContextTypes.DEFAULT_T
     await query.message.reply_text(f"✅ Reminder untuk data airdrop baris {row_number} telah dijadwalkan.", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+@restricted
 async def reminder_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -440,6 +463,7 @@ async def reminder_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text(text, parse_mode="Markdown", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+@restricted
 async def stop_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -456,6 +480,7 @@ async def stop_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await query.message.reply_text("Pilih reminder yang ingin dihentikan:", reply_markup=reply_markup)
     return STOP_REMINDER_CHOOSE
 
+@restricted
 async def process_stop_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
