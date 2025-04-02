@@ -6,7 +6,7 @@
 
 # Tutorial Video :
 
-https://youtu.be/fBjcpvR3FtA
+https://youtu.be/uo1dEZFVmQA
 
 # Simple Tutorial :
 ```
