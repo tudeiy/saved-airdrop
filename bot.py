@@ -439,7 +439,7 @@ async def reminder_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
         job = context.bot_data.get(name)
         row_number = job.data["row_number"]
         interval_minutes = int(job.data.get("interval", 0) / 60)
-        text += f"• Data Airdrop baris {row_number} | Interval: {interval_minutes} menit | Next run: {job.next_run_time}\n"
+        text += f"• No {row_number} | Waktu: {interval_minutes} menit | Reminder: {job.next_run_time}\n"
     await query.message.reply_text(text, parse_mode="Markdown", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
