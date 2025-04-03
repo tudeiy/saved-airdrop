@@ -136,63 +136,53 @@ async def save_other_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"✅ WALLET {context.user_data['wallet_address'].upper()} ({chain.upper()}) BERHASIL DISIMPAN!", reply_markup=get_main_keyboard())
     return ConversationHandler.END
 
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ContextTypes, ConversationHandler
+from datetime import datetime
+
+# Definisi state untuk percakapan
+INPUT_AIRDROP_LINK, INPUT_AIRDROP_TITLE = range(2)
+
+# Fungsi untuk mulai menambahkan airdrop
 async def add_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     await query.message.reply_text("📎 Silakan kirimkan LINK TELEGRAM untuk AIRDROP ini:")
     return INPUT_AIRDROP_LINK
 
+# Fungsi untuk menerima link airdrop
 async def receive_airdrop_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
     context.user_data["airdrop_link"] = text.upper()
     await update.message.reply_text("📝 Silakan masukkan JUDUL AIRDROP:")
     return INPUT_AIRDROP_TITLE
 
+# Fungsi untuk menerima judul airdrop
 async def receive_airdrop_title(update: Update, context: ContextTypes.DEFAULT_TYPE):
     title = update.message.text.strip()
     context.user_data["airdrop_title"] = title.upper()
-    keyboard = [
-        [InlineKeyboardButton("TESTNET", callback_data="airdrop_type_testnet")],
-        [InlineKeyboardButton("AIRDROP", callback_data="airdrop_type_airdrop")],
-        [InlineKeyboardButton("NODE", callback_data="airdrop_type_node")],
-        [InlineKeyboardButton("OTHER", callback_data="airdrop_type_other")],
-    ]
-    await update.message.reply_text("Pilih JENIS AIRDROP:", reply_markup=InlineKeyboardMarkup(keyboard))
-    return CHOOSE_AIRDROP_TYPE
-
-async def choose_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    context.user_data["airdrop_type"] = query.data.replace("airdrop_type_", "").upper()
-    user_id = str(query.from_user.id)
-    wallets = load_wallets().get(user_id, [])
-    if not wallets:
-        await query.message.reply_text("⚠️ ANDA BELUM MEMILIKI WALLET. SILAKAN TAMBAHKAN WALLET TERLEBIH DAHULU.", reply_markup=get_main_keyboard())
-        return ConversationHandler.END
-    keyboard = [
-        [InlineKeyboardButton(f"{w['address']} ({w['chain']})", callback_data=f"wallet_{i}")]
-        for i, w in enumerate(wallets)
-    ]
-    await query.message.reply_text("PILIH WALLET ADDRESS UNTUK AIRDROP INI:", reply_markup=InlineKeyboardMarkup(keyboard))
-    return CHOOSE_WALLET
-
-async def save_airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
+    
+    # Menyimpan data ke Google Sheets
     airdrop_link = context.user_data["airdrop_link"]
     airdrop_title = context.user_data["airdrop_title"]
-    airdrop_type = context.user_data["airdrop_type"]
-    user_id = str(query.from_user.id)
-    wallets = load_wallets().get(user_id, [])
-    index = int(query.data.replace("wallet_", ""))
-    wallet_address = wallets[index]["address"] if index < len(wallets) else "TIDAK DITEMUKAN"
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    new_row = [airdrop_link, airdrop_title, airdrop_type, wallet_address, timestamp]
-    sheet.append_row(new_row)
+
+    # Simpan data ke Google Sheets
+    new_row = [airdrop_link, airdrop_title, timestamp]
+    sheet.append_row(new_row)  # Ganti dengan kode penyimpanan ke Google Sheets Anda
     last_row = len(sheet.get_all_values())
-    sheet.format(f"A{last_row}:E{last_row}", {"horizontalAlignment": "CENTER"})
-    await query.message.reply_text("✅ AIRDROP BERHASIL DISIMPAN KE GOOGLE SHEET!", reply_markup=get_main_keyboard())
+    sheet.format(f"A{last_row}:C{last_row}", {"horizontalAlignment": "CENTER"})
+
+    # Memberikan konfirmasi kepada pengguna
+    await update.message.reply_text("✅ AIRDROP BERHASIL DISIMPAN KE GOOGLE SHEET!", reply_markup=get_main_keyboard())
     return ConversationHandler.END
+
+# Fungsi untuk mendapatkan keyboard utama (bisa disesuaikan)
+def get_main_keyboard():
+    # Contoh keyboard, sesuaikan dengan kebutuhan Anda
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("Tambah Airdrop", callback_data="add_airdrop")]
+    ])
 
 async def delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
